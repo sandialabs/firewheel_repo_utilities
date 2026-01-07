@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 import sys
 import logging
+import platform
 import subprocess
 
-from json_logger import JSONLogger
+from pythonjsonlogger.json import JsonFormatter
 
 # pylint: disable=consider-using-f-string
 
-logger = logging.getLogger("kill_analytics")
-logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter("%(message)s")
+log = logging.getLogger("kill_analytics")
+log.setLevel(logging.DEBUG)
+formatter = JsonFormatter(
+    "%(pathname)s %(module)s %(lineno)d %(name)s %(asctime)s %(message)s %(name)s %(levelname)s",
+    static_fields={"hostname": platform.node()},
+)
 
 # Add logging to stdout
 console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setLevel(logging.DEBUG)
 console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
-
-# Wrap the new json logger
-log = JSONLogger(logger)
+log.addHandler(console_handler)
 
 
 def kill_all():

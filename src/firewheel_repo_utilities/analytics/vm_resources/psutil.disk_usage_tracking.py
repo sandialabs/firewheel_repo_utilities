@@ -1,12 +1,12 @@
 import sys
 import logging
+import platform
 from time import sleep
 
 import psutil
-from json_logger import JSONLogger
+from pythonjsonlogger.json import JsonFormatter
 
 
-# pylint: disable=consider-using-f-string
 class DiskUsageTracking:
     """Track the VM's disk usage using psutil."""
 
@@ -17,37 +17,24 @@ class DiskUsageTracking:
             refresh_interval_sec (int): Interval between tracking the statistics.
         """
         self.refresh_interval_sec = refresh_interval_sec
-        logger = logging.getLogger("disk_usage_tracking")
-        logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter("%(message)s")
+        self._log = logging.getLogger("disk_usage_tracking")
+        self._log.setLevel(logging.DEBUG)
+        formatter = JsonFormatter(
+            "%(pathname)s %(module)s %(lineno)d %(name)s %(asctime)s %(message)s %(name)s %(levelname)s",
+            static_fields={"hostname": platform.node()},
+        )
 
         # Add logging to stdout
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(logging.DEBUG)
         console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)
-
-        # Wrap the new json logger
-        self._log = JSONLogger(logger)
-
-        logger = logging.getLogger("disk_usage_tracking2")
-        logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter("%(message)s")
+        self._log.addHandler(console_handler)
 
         # Add logging to a file
         file_handler = logging.FileHandler("/opt/analytics/disk_usage_tracking.log")
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
-
-        # Add logging to stdout
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setLevel(logging.DEBUG)
-        console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)
-
-        # Wrap the new json logger
-        self._log2 = JSONLogger(logger)
+        self._log.addHandler(file_handler)
 
     def run(self):
         """Start tracking the system disk usage."""
@@ -66,7 +53,7 @@ class DiskUsageTracking:
                 disk_usages[
                     "analytics.disk_usage_tracking.{}".format(partition.mountpoint)
                 ] = disk_usage._asdict()
-            self._log2.debug("", jarg=disk_usages)
+            self._log.debug(disk_usages)
 
             sleep(self.refresh_interval_sec)
 

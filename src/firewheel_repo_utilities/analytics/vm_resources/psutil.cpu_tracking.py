@@ -2,13 +2,13 @@ import sys
 import json
 import logging
 import datetime
+import platform
 from time import sleep
 
 import psutil
-from json_logger import JSONLogger
+from pythonjsonlogger.json import JsonFormatter
 
 
-# pylint: disable=consider-using-f-string,unspecified-encoding
 class CPUTracking:
     """Track the system CPU usage using psutil."""
 
@@ -19,18 +19,18 @@ class CPUTracking:
             refresh_interval_sec (int): Interval between tracking the statistics.
         """
         self.refresh_interval_sec = refresh_interval_sec
-        logger = logging.getLogger("cpu_tracking")
-        logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter("%(message)s")
+        self._log = logging.getLogger("cpu_tracking")
+        self._log.setLevel(logging.DEBUG)
+        formatter = JsonFormatter(
+            "%(pathname)s %(module)s %(lineno)d %(name)s %(asctime)s %(message)s %(name)s %(levelname)s",
+            static_fields={"hostname": platform.node()},
+        )
 
         # Add logging to stdout
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(logging.DEBUG)
         console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)
-
-        # Wrap the new json logger
-        self._log = JSONLogger(logger)
+        self._log.addHandler(console_handler)
 
     def run(self):
         """Start tracking the system CPU."""
