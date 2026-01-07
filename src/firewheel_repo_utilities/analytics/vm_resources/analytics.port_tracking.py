@@ -5,7 +5,7 @@ import logging
 from time import sleep
 from subprocess import check_output
 
-from json_logger import JSONLogger
+from pythonjsonlogger.json import JsonFormatter
 
 
 # pylint: disable=consider-using-f-string
@@ -34,18 +34,15 @@ class PortTracking:
             options_filename (str): A path to a file which contains the expected parameters.
         """
         self.options_filename = options_filename
-        logger = logging.getLogger("port_tracking")
-        logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter("%(message)s")
+        self._log = logging.getLogger("port_tracking")
+        self._log.setLevel(logging.DEBUG)
+        formatter = JsonFormatter()
 
         # Add logging to a file
         file_handler = logging.FileHandler("/opt/analytics/port_tracking.log")
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
-
-        # Wrap the new json logger
-        self._log = JSONLogger(logger)
+        self._log.addHandler(file_handler)
 
     def run(self):
         """Run netstat on the given host and log the output."""

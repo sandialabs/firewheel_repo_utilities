@@ -8,10 +8,9 @@ from time import sleep
 from queue import Queue
 from subprocess import PIPE, Popen, CalledProcessError, check_output
 
-from json_logger import JSONLogger
+from pythonjsonlogger.json import JsonFormatter
 
 
-# pylint: disable=consider-using-f-string,unspecified-encoding,too-many-function-args
 class Strace:
     """
     This agent runs the strace command on linux to trace the specified command.
@@ -42,18 +41,15 @@ class Strace:
             options_filename (str): A path to a file which contains the expected parameters.
         """
         self.options_filename = options_filename
-        logger = logging.getLogger("strace")
-        logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter("%(message)s")
+        self._log = logging.getLogger("strace")
+        self._log.setLevel(logging.DEBUG)
+        formatter = JsonFormatter()
 
         # Add logging to stdout
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(logging.DEBUG)
         console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)
-
-        # Wrap the new json logger
-        self._log = JSONLogger(logger)
+        self._log.addHandler(console_handler)
 
         self.running_straces = (
             Queue()

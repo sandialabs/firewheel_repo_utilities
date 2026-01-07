@@ -16,6 +16,13 @@
     dest: "{{ download_dir }}/psutil-5.9.8-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
     checksum: "sha256:d06016f7f8625a1825ba3732081d77c94589dca78b7a3fc072194851e88461a4"
 
+- name: Download python-json-logger
+  ansible.builtin.get_url:
+    url: "https://files.pythonhosted.org/packages/51/e5/fecf13f06e5e5f67e8837d777d1bc43fac0ed2b77a676804df5c34744727/python_json_logger-4.0.0-py3-none-any.whl"
+    dest: "{{ download_dir }}/python_json_logger-4.0.0-py3-none-any.whl"
+    checksum: "sha256:af09c9daf6a813aa4cc7180395f50f2a9e5fa056034c9953aec92e381c5ba1e2"
+
+
 - name: Download inotify-tools deb package
   ansible.builtin.get_url:
     url: "http://launchpadlibrarian.net/166561163/inotify-tools_3.14-1ubuntu1_amd64.deb"

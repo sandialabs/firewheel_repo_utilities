@@ -131,7 +131,7 @@ class Analytics:
     All other analytic functions must be called individually.
     """
 
-    def __init__(self, python_version="python3.7"):
+    def __init__(self, python_version="python3.10"):
         """
         Install/configure a few VMRs which are required by all analytic methods.
 
@@ -142,7 +142,7 @@ class Analytics:
 
         self.install_pip_package_list(
             -100,
-            ["json_logger-0.1-py2.py3-none-any.whl"],
+            ["python_json_logger-4.0.0-py3-none-any.whl"],
             python_version=self.python_version,
         )
         self.run_executable(-101, "mkdir", "/opt/analytics", vm_resource=False)
