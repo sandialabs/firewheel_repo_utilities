@@ -10,7 +10,10 @@ from pythonjsonlogger.json import JsonFormatter
 
 log = logging.getLogger("kill_analytics")
 log.setLevel(logging.DEBUG)
-formatter = JsonFormatter("%(pathname)s %(module)s %(lineno)d %(name)s %(asctime)s %(message)s %(name)s %(levelname)s", static_fields={"hostname": platform.node()})
+formatter = JsonFormatter(
+    "%(pathname)s %(module)s %(lineno)d %(name)s %(asctime)s %(message)s %(name)s %(levelname)s",
+    static_fields={"hostname": platform.node()},
+)
 
 # Add logging to stdout
 console_handler = logging.StreamHandler(sys.stdout)
