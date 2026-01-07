@@ -3,6 +3,7 @@ import os
 import sys
 import pickle
 import logging
+import platform
 import threading
 from time import sleep
 from queue import Queue
@@ -43,7 +44,7 @@ class Strace:
         self.options_filename = options_filename
         self._log = logging.getLogger("strace")
         self._log.setLevel(logging.DEBUG)
-        formatter = JsonFormatter()
+        formatter = JsonFormatter("%(pathname)s %(module)s %(lineno)d %(name)s %(asctime)s %(message)s %(name)s %(levelname)s", static_fields={"hostname": platform.node()})
 
         # Add logging to stdout
         console_handler = logging.StreamHandler(sys.stdout)

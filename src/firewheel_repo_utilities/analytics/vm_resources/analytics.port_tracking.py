@@ -2,6 +2,7 @@
 import sys
 import pickle
 import logging
+import platform
 from time import sleep
 from subprocess import check_output
 
@@ -36,7 +37,7 @@ class PortTracking:
         self.options_filename = options_filename
         self._log = logging.getLogger("port_tracking")
         self._log.setLevel(logging.DEBUG)
-        formatter = JsonFormatter()
+        formatter = JsonFormatter("%(pathname)s %(module)s %(lineno)d %(name)s %(asctime)s %(message)s %(name)s %(levelname)s", static_fields={"hostname": platform.node()})
 
         # Add logging to a file
         file_handler = logging.FileHandler("/opt/analytics/port_tracking.log")
