@@ -7,15 +7,15 @@ from pythonjsonlogger.json import JsonFormatter
 
 # pylint: disable=consider-using-f-string
 
-self._log = logging.getLogger("kill_analytics")
-self._log.setLevel(logging.DEBUG)
+log = logging.getLogger("kill_analytics")
+log.setLevel(logging.DEBUG)
 formatter = JsonFormatter()
 
 # Add logging to stdout
 console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setLevel(logging.DEBUG)
 console_handler.setFormatter(formatter)
-self._log.addHandler(console_handler)
+log.addHandler(console_handler)
 
 
 def kill_all():
