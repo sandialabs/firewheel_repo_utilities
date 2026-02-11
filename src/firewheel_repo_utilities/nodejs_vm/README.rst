@@ -29,34 +29,23 @@ Extending the Model Component with New Versions of Node.js
 **********************************************************
 
 The supported versions of Node are listed below in the `VM Resources`_ section.
-To use a different version of Node in the model component, download the binary from a source repository (e.g., `nodejs.org <https://nodejs.org/en/download/prebuilt-binaries>`_) and add it to the ``vm_resources`` directory.
-Ensure that the binary is a ``*.tar.xz`` archive with a filename following the format ``node-v<Major>.<minor>.<patch>-linux-x64.tar.xz``.
+To use a different version of Node in the model component, download the binary from a source repository (e.g., `nodejs.org <https://nodejs.org/en/download/prebuilt-binaries>`_) and either add it to the ``vm_resources`` directory directory, or preferably, configure the MC to source the binary from a remote location.
+
+.. note::
+
+   Node.js binaries should not be distributed with this MC repository, and binaries that are to be permanently included with the MC should not be committed directly to the ``vm_resources`` directory.
+   Instead, follow the instructions for preparing a :ref:`mc_install` to download the new binary from its source or a trusted repository.
+   To determine the checksum of a Node binary to provide in an ``INSTALL`` script, run:
+
+   .. code-block:: bash
+
+      shasum -a 256 <node-binary>
+
+Following Node custom, ensure that the binary is a ``*.tar.xz`` archive with a filename following the format ``node-v<Major>.<minor>.<patch>-linux-x64.tar.xz``.
 This filename structure is the default for all binaries downloaded from the official Node.js repository and is required by the installer.
-Note that only Linux binaries can be used, since the ``NodeJSVM`` decorator requires that the VM be an instance of ``UbuntuHost`` provided by the ``linux.ubuntu`` model component.
-Once downloaded to the ``vm_resources`` directory, this new version of Node should be available as an argument to the decorator as described above (the ``MANIFEST`` already supports arbitrary ``.tar.xz`` VM resources and so should not need modification).
+Also note that only Linux binaries can be used, since the ``NodeJSVM`` decorator requires that the VM be an instance of ``UbuntuHost`` provided by the ``linux.ubuntu`` model component.
 
-Since Node.js binaries should not be distributed with the repository, binaries that are to be permanently included with the MC should not be committed directly to the ``vm_resources`` directory.
-Instead, update the ``INSTALL`` script to download the new binary from its source.
-For binaries made available through the official Node.js website, simply add the new version of node along with its corresponding checksum in the ``DOWNLOAD SPECIFICATION`` section of the script:
-
-.. code-block:: bash
-
-        node_18_13_0=("18.13.0" "7f5d6922a91986ef059ba8a4396aa435440adacfe6fc6fab60a857c8f2cf5e7a")
-        node_20_12_2=("20.12.2" "595272130310cbe12301430756f23d153f7ab95d00174c02adc11a2e3703d183")
-
-        # Add new Node.js versions here, replacing terms in angle brackets
-        node_<M>_<m>_<p>=("<Major>.<minor>.<patch>" "<sha256 checksum>");
-
-        # Update the `node_versions` array to include the new version
-        node_versions=(node_18_13_0 node_20_12_2 node_<M>_<m>_<p>)
-
-To determine the checksum of a Node binary that can be verified by the ``INSTALL`` script, run the following:
-
-.. code-block:: bash
-
-        shasum -a 256 <node-binary>
-
-Finally, update the list of VM resources here in the README.
+Once downloaded to the ``vm_resources`` directory, new versions of Node should be available as an argument to the decorator as described above (the ``MANIFEST`` already supports arbitrary ``.tar.xz`` VM resources and so should not need modification).
 
 
 ******************************************************
@@ -90,6 +79,7 @@ VM Resources
 
 * ``node-v18.13.0-linux-x64.tar.xz``
 * ``node-v20.12.2-linux-x64.tar.xz``
+* ``node-v24.13.1-linux-x64.tar.xz``
 
 
 *****************
