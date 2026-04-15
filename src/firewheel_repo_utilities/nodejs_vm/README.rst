@@ -49,7 +49,7 @@ Once downloaded to the ``vm_resources`` directory, new versions of Node should b
 
 
 ******************************************************
-Downloading Packages for Use in VMs Supoorting Node.js
+Downloading Packages for Use in VMs Supporting Node.js
 ******************************************************
 
 This model component facilitates preparation of a VM to offer a supported version of Node.js.
