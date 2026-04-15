@@ -22,6 +22,7 @@ Multiple versions of Node are provided as VM resources, each with a version spec
 
 Other less commonly used parameters may also be configured via the decorator, including the method of installation for the Node binaries (directly into ``/usr/local/bin`` or symlinked there) and whether or not ``npm`` should operate in offline mode (set to work offline by default).
 See the :py:meth:`decorator constructor documentation <utilties.nodejs.NodeJSVM.__init__>` for more details.
+When installed, the decorator exposes ``node_bin``, ``node_lib``, and ``bash_node_prefix`` attributes so downstream components can reuse the selected Node.js installation without recomputing paths.
 
 
 **********************************************************
@@ -49,7 +50,7 @@ Once downloaded to the ``vm_resources`` directory, new versions of Node should b
 
 
 ******************************************************
-Downloading Packages for Use in VMs Supoorting Node.js
+Downloading Packages for Use in VMs Supporting Node.js
 ******************************************************
 
 This model component facilitates preparation of a VM to offer a supported version of Node.js.
@@ -62,7 +63,7 @@ Then, using an Internet connection in the VM builder:
 #. Install the package dependencies using ``npm`` (installed with Node.js).
 #. [Optional] Zip dependency files (e.g., ``package.json``, ``package-lock.json`` and ``node_modules`` files and directories) into a tar archive.
 #. Use SCP to copy the files from the VM builder machine to the ``vm_resources`` directory in the model component repository on the machine being used for MC development. (Hint: Use the ``ip addr`` command on the builder VM to get the IP address of that machine.)
-#. Indicate how the model component should handle the files. This may include updating the ``MANIFEST``, using the :py:meth:`linux.base_objects.LinuxHost.unpack_tar` or :py:meth:`base_objects.VMEndpoint.drop_file` methods. Packages may be dropped anywhere on the file system, with global packages typically stored in ``/usr/local/lib/node`` or ``/usr/local/lib/node_modules`` and local packages stored in any other directory of choice.
+#. Indicate how the model component should handle the files. This may include updating the ``MANIFEST`` and using :py:meth:`utilities.nodejs.NodeJSVM.install_node_package_bundle` to unpack global package bundles into the selected Node.js installation. Packages may be dropped anywhere on the file system, with global packages typically installed into the decorator's ``node_lib`` path and local packages stored in any other directory of choice.
 
 
 **Attribute Provides:**

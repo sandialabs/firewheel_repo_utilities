@@ -83,12 +83,39 @@ class NodeJSVM:
 
     def _install_node_symlinked(self, node_dir):
         # Install Node by extracting the archive and adding symbolic links
+        self.node_bin = node_dir / self.node_specifier / "bin"
+        self.node_lib = node_dir / self.node_specifier / "lib/node_modules"
+        self.bash_node_prefix = f"PATH=$PATH:{self.node_bin} NODE_PATH={self.node_lib}"
         self._unpack_node(node_dir)
-        node_bin_dir = node_dir / self.node_specifier / "bin"
         for exe in ("node", "npm", "npx"):
-            exe_path = node_bin_dir / exe
+            exe_path = self.node_bin / exe
             link_path = self._local_bin_dir / exe
             self.run_executable(-99, "ln", f"-sf {exe_path} {link_path}")
+
+    def install_node_package_bundle(
+        self, rel_time, package_bundle_name, destination=None, strip_components=1
+    ):
+        """
+        Install an offline Node.js package bundle into the VM.
+
+        Args:
+            rel_time (int): Relative time to unpack the package bundle.
+            package_bundle_name (str): VM resource archive containing Node.js packages.
+            destination (str, pathlib.Path, optional): Directory to receive the packages.
+                Defaults to this Node.js installation's global ``node_modules`` directory.
+            strip_components (int): Number of leading archive path components to strip.
+        """
+        if destination is None:
+            destination = self.node_lib
+        if destination is None:
+            raise ValueError("A Node.js package bundle destination is required.")
+        self.unpack_tar(
+            rel_time,
+            package_bundle_name,
+            options=f"-x --strip-components={strip_components} -f",
+            directory=destination,
+            vm_resource=True,
+        )
 
     def _unpack_node(self, extract_dir):
         # Extract and unpack the Node.js archive on the VM
@@ -102,4 +129,4 @@ class NodeJSVM:
 
     def _set_offline_npm(self):
         # Set npm to run in offline mode
-        self.run_executable(-50, "npm", arguments=["config", "offline", "true"])
+        self.run_executable(-50, "npm", arguments=["config", "set", "offline=true"])
