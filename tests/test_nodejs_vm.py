@@ -1,8 +1,8 @@
 """Tests for the utilities.nodejs model component object."""
 
-import importlib
 import sys
 import types
+import importlib
 from pathlib import Path
 
 
@@ -29,7 +29,9 @@ def _load_nodejs_module(monkeypatch):
     monkeypatch.setitem(sys.modules, "linux.ubuntu", linux_ubuntu)
     monkeypatch.setitem(sys.modules, "firewheel", firewheel)
     monkeypatch.setitem(sys.modules, "firewheel.control", control)
-    monkeypatch.setitem(sys.modules, "firewheel.control.experiment_graph", experiment_graph)
+    monkeypatch.setitem(
+        sys.modules, "firewheel.control.experiment_graph", experiment_graph
+    )
     module_name = "firewheel_repo_utilities.nodejs_vm.model_component_objects"
     sys.modules.pop(module_name, None)
     return importlib.import_module(module_name)
@@ -44,7 +46,9 @@ def test_nodejs_symlink_install_exposes_paths_for_downstream_components(monkeypa
             self.unpacked = []
             super().__init__(node_version="18.13.0", symlink=True)
 
-        def unpack_tar(self, time, archive, options="-xzf", directory=None, vm_resource=False):
+        def unpack_tar(
+            self, time, archive, options="-xzf", directory=None, vm_resource=False
+        ):
             self.unpacked.append((time, archive, options, directory, vm_resource))
 
         def run_executable(self, time, executable, arguments=None, vm_resource=False):
@@ -58,19 +62,36 @@ def test_nodejs_symlink_install_exposes_paths_for_downstream_components(monkeypa
         "PATH=$PATH:/opt/node-v18.13.0-linux-x64/bin "
         "NODE_PATH=/opt/node-v18.13.0-linux-x64/lib/node_modules"
     )
-    assert vm.unpacked == [(-100, "node-v18.13.0-linux-x64.tar.xz", "-xf", Path("/opt"), True)]
-    assert (-99, "ln", "-sf /opt/node-v18.13.0-linux-x64/bin/node /usr/local/bin/node", False) in vm.commands
-    assert (-99, "ln", "-sf /opt/node-v18.13.0-linux-x64/bin/npm /usr/local/bin/npm", False) in vm.commands
-    assert (-99, "ln", "-sf /opt/node-v18.13.0-linux-x64/bin/npx /usr/local/bin/npx", False) in vm.commands
+    assert vm.unpacked == [
+        (-100, "node-v18.13.0-linux-x64.tar.xz", "-xf", Path("/opt"), True)
+    ]
+    assert (
+        -99,
+        "ln",
+        "-sf /opt/node-v18.13.0-linux-x64/bin/node /usr/local/bin/node",
+        False,
+    ) in vm.commands
+    assert (
+        -99,
+        "ln",
+        "-sf /opt/node-v18.13.0-linux-x64/bin/npm /usr/local/bin/npm",
+        False,
+    ) in vm.commands
+    assert (
+        -99,
+        "ln",
+        "-sf /opt/node-v18.13.0-linux-x64/bin/npx /usr/local/bin/npx",
+        False,
+    ) in vm.commands
     assert (-50, "npm", ["config", "set", "offline=true"], False) in vm.commands
 
-    vm.install_node_package_bundle(-63, "web3js-quorum-node-modules.tgz")
+    vm.install_node_package_bundle(-63, "PLACEHOLDER.tgz")
 
     # The install_node_package_bundle method now includes -C <destination> in the options
     # instead of passing directory as a separate parameter, to ensure tar extracts to the correct location
     assert vm.unpacked[-1] == (
         -63,
-        "web3js-quorum-node-modules.tgz",
+        "PLACEHOLDER.tgz",
         "-x --strip-components=1 -C /opt/node-v18.13.0-linux-x64/lib/node_modules -f",
         None,  # directory parameter is now None since it's in options
         True,

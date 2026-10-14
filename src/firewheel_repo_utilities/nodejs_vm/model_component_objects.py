@@ -106,6 +106,9 @@ class NodeJSVM:
                 If node_lib is not set (e.g., for symlinked installations), defaults to
                 /opt/node-v{version}-linux-x64/lib/node_modules.
             strip_components (int): Number of leading archive path components to strip.
+
+        Raises:
+            ValueError: If an explicit Node.js destination is not provided nor already exists.
         """
         if destination is None:
             destination = self.node_lib
